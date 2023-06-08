@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Drag and Drop Example</title>
+  <style>
+    .container {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+    }
+    .item {
+      background-color: #f2f2f2;
+      padding: 10px;
+      margin-bottom: 10px;
+      cursor: move;
+    }
+    .success-message {
+      color: green;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+  <script>
+    // Function to handle the drag start event
+    function dragStart(event) {
+      // Set the data being dragged (item id in this case)
+      event.dataTransfer.setData("text/plain", event.target.id);
+      
+      // Add a class to the dragged item for visual feedback
+      event.target.classList.add("dragged");
+    }
+    
+    // Function to handle the drag over event
+    function dragOver(event) {
+      // Prevent default to allow drop
+      event.preventDefault();
+    }
+    
+    // Function to handle the drop event
+    function drop(event) {
+      // Prevent default to avoid opening a new tab on drop
+      event.preventDefault();
+      
+      // Get the dragged item's id from the data transfer
+      const itemId = event.dataTransfer.getData("text/plain");
+      
+      // Remove the class added for visual feedback
+      const draggedItem = document.getElementById(itemId);
+      draggedItem.classList.remove("dragged");
+      
+      // Append the dragged item to the drop container
+      event.target.appendChild(draggedItem);
+      
+      // Display a success message
+      const successMessage = document.getElementById("success-message");
+      successMessage.style.display = "block";
+      
+      // Hide the message after 2 seconds
+      setTimeout(function() {
+        successMessage.style.display = "none";
+      }, 2000);
+    }
+    
+    // Function to reset the containers to their original state
+    function resetContainers() {
+      // Remove all items from the drop container
+      const dropContainer = document.getElementById("drop-container");
+      while (dropContainer.firstChild) {
+        dropContainer.firstChild.remove();
+      }
+      
+      // Reset the first container to its original state
+      const firstContainer = document.getElementById("first-container");
+      const originalItems = firstContainer.querySelectorAll(".item");
+      originalItems.forEach(function(item) {
+        firstContainer.appendChild(item);
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div id="first-container">
+      <div class="item" id="item1" draggable="true" ondragstart="dragStart(event)">Item 1</div>
+      <div class="item" id="item2" draggable="true" ondragstart="dragStart(event)">Item 2</div>
+      <div class="item" id="item3" draggable="true" ondragstart="dragStart(event)">Item 3</div>
+    </div>
+    <div id="drop-container" ondragover="dragOver(event)" ondrop="drop(event)"></div>
+  </div>
+  
+  <button onclick="resetContainers()">Reset</button>
+  
+  <p id="success-message" class="success-message" style="display: none;">Item dropped successfully!</p>
+</body>
+</html>
